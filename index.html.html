@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>드림 서사 정리기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;background:#f7f6f3;color:#1a1816;font-size:14px;line-height:1.5;}
+.app{display:flex;flex-direction:column;min-height:100vh;}
+.app-header{background:#ffffff;border-bottom:1px solid #e8e5df;padding:14px 20px;display:flex;align-items:center;gap:12px;}
+.app-header h1{font-size:16px;font-weight:700;color:#1a1816;}
+.app-header p{font-size:12px;color:#9a9490;}
+.app-body{display:flex;flex:1;min-height:0;}
+
+/* ─ 폼 패널 ─ */
+.form-panel{width:300px;flex-shrink:0;background:#ffffff;border-right:1px solid #e8e5df;padding:20px;overflow-y:auto;height:calc(100vh - 53px);position:sticky;top:0;}
+.section-title{font-size:11px;font-weight:700;color:#9a9490;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #f0ede8;}
+.form-section{margin-bottom:24px;}
+.form-group{margin-bottom:12px;}
+.form-label{display:block;font-size:12px;font-weight:600;color:#5a5652;margin-bottom:5px;}
+.form-hint{font-size:11px;color:#9a9490;margin-top:4px;}
+.form-hint em{font-style:normal;color:#c2507a;font-weight:600;}
+input[type="text"],textarea,select{width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:8px;font-size:13px;font-family:'Noto Sans KR',sans-serif;background:#f9f8f6;color:#1a1816;outline:none;line-height:1.5;-webkit-appearance:none;appearance:none;display:block;}
+input[type="text"]:focus,textarea:focus,select:focus{border-color:#3d72b4;background:#ffffff;box-shadow:0 0 0 3px rgba(61,114,180,0.1);}
+textarea{resize:vertical;min-height:80px;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a9490' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px;}
+
+/* ─ 커스텀 버튼 그룹 (라디오 대체) ─ */
+.btn-group{display:flex;gap:5px;}
+.btn-opt{flex:1;text-align:center;padding:8px 4px;border:1.5px solid #e8e5df;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;color:#9a9490;background:#ffffff;transition:all 0.15s;word-break:keep-all;-webkit-user-select:none;user-select:none;font-family:'Noto Sans KR',sans-serif;}
+.btn-opt:hover{background:#f0ede8;}
+.btn-opt.sel-dream{background:#fdf2f6;color:#c2507a;border-color:#c2507a;}
+.btn-opt.sel-canon{background:#f0f5fd;color:#3d72b4;border-color:#3d72b4;}
+.btn-opt.sel-turn{background:#fef8f0;color:#c47b2a;border-color:#c47b2a;}
+.btn-opt.sel-def{background:#1a1816;color:#ffffff;border-color:#1a1816;}
+.btn-opt.sel-high{background:#fdf2f6;color:#c2507a;border-color:#c2507a;}
+.btn-opt.sel-dim{background:#f0ede8;color:#9a9490;border-color:#e8e5df;}
+
+/* ─ 액션 버튼 ─ */
+.btn{width:100%;padding:10px 16px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all 0.15s;letter-spacing:-0.2px;}
+.btn-primary{background:#1a1816;color:#ffffff;margin-bottom:8px;}
+.btn-primary:hover{background:#000000;}
+.btn-secondary{background:#f0ede8;color:#5a5652;margin-bottom:8px;}
+.btn-secondary:hover{background:#e8e5df;}
+.btn-export{background:linear-gradient(135deg,#1a1816,#3a3530);color:#ffffff;padding:12px 16px;font-size:13px;margin-top:4px;}
+
+/* ─ 탭 ─ */
+.preview-panel{flex:1;padding:24px;overflow-y:auto;}
+.view-tabs-wrap{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:12px;flex-wrap:wrap;}
+.view-tabs-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.view-tabs{display:flex;background:#ffffff;border:1px solid #e8e5df;border-radius:12px;padding:3px;gap:2px;}
+.view-tabs-mode{background:#f7f6f3;border-color:#f0ede8;}
+.tabs-divider{width:1px;height:22px;background:#e8e5df;margin:0 2px;flex-shrink:0;}
+.tab-btn{padding:7px 14px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;color:#9a9490;border:none;background:none;font-family:'Noto Sans KR',sans-serif;white-space:nowrap;transition:all 0.15s;-webkit-tap-highlight-color:transparent;}
+.view-tabs-mode .tab-btn{font-size:11.5px;}
+.tab-btn.active-filter{background:#1a1816;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.18);}
+.tab-btn.active-filter.tb-dream{background:#c2507a;color:#fff;}
+.tab-btn.active-filter.tb-canon{background:#3d72b4;color:#fff;}
+.tab-btn.active-mode{background:#3d72b4;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.15);}
+.tab-btn.active-mode.tb-narr{background:#7c5cbf;color:#fff;}
+.view-legend{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#9a9490;font-weight:500;}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.empty-state{text-align:center;padding:80px 20px;background:#ffffff;border-radius:12px;border:1px solid #e8e5df;color:#9a9490;}
+.empty-state .icon{font-size:36px;margin-bottom:12px;}
+.empty-state p{font-size:14px;}
+
+/* ─ 챕터 블록 ─ */
+.era-block{background:#ffffff;border:1px solid #e8e5df;border-radius:12px;margin-bottom:16px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.06);}
+.era-header{display:flex;align-items:center;gap:12px;padding:16px 20px;background:#f9f8f6;border-bottom:1px solid #f0ede8;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;}
+.era-header:hover{background:#f0ede8;}
+.era-toggle-btn{width:22px;height:22px;border:1.5px solid #e8e5df;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#9a9490;flex-shrink:0;transition:transform 0.25s;background:#ffffff;}
+.era-block.collapsed .era-toggle-btn{transform:rotate(-90deg);}
+.era-block.collapsed .era-header{border-bottom:none;}
+.era-title-group{flex:1;min-width:0;}
+.era-title{font-size:15px;font-weight:700;color:#1a1816;letter-spacing:-0.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.era-meta{font-size:11px;color:#9a9490;margin-top:2px;}
+.era-ctrl-btns{display:flex;gap:4px;flex-shrink:0;}
+.ctrl-btn{padding:5px 10px;font-size:11px;border:1px solid #e8e5df;border-radius:6px;background:#ffffff;color:#5a5652;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;transition:all 0.15s;white-space:nowrap;}
+.ctrl-btn:hover{background:#f0ede8;color:#1a1816;}
+.ctrl-btn:disabled{opacity:0.3;cursor:not-allowed;}
+.ctrl-btn.danger:hover{background:#fef0f0;color:#c0392b;border-color:#f5c6c6;}
+.era-body{overflow:hidden;opacity:1;}
+.era-block.collapsed .era-body{display:none;}
+
+/* ─ 콘텐츠 레이아웃 ─ */
+.era-content{display:flex;align-items:stretch;}
+.timeline-area{flex:1;padding:20px 24px;min-width:0;}
+.narrative-area{flex:1;padding:20px 24px;border-left:1px solid #f0ede8;background:#fdfcfa;min-width:0;}
+
+/* ─ 관계성 ─ */
+.rel-box{background:#fdf2f6;border:1px dashed #f5d0de;border-radius:8px;padding:12px 16px;margin-top:16px;}
+.rel-label{font-size:13.5px;font-weight:700;color:#c2507a;margin-bottom:6px;display:block;}
+.rel-text{font-size:13px;color:#5a3048;line-height:1.65;}
+
+/* ─ 서사 텍스트 ─ */
+.narrative-content{font-size:13.5px;color:#5a5652;}
+.au-p{margin:0 0 5px;line-height:1.65;color:#3a3632;}
+.au-spacer{height:8px;}
+.au-subtitle{font-size:15px;font-weight:700;color:#1a1816;margin:18px 0 8px;padding-bottom:5px;border-bottom:1.5px solid #e8e5df;display:block;letter-spacing:-0.3px;}
+.au-subtitle:first-child{margin-top:0;}
+
+/* ─ 타임라인 ─ */
+.timeline-inner{display:flex;flex-direction:column;position:relative;padding-left:22px;border-left:2px solid #e8e5df;margin-left:8px;}
+.au-event{position:relative;margin-bottom:16px;width:100%;}
+.au-event:last-child{margin-bottom:0;}
+.au-event::before{content:'';position:absolute;left:-29px;top:4px;width:11px;height:11px;border-radius:50%;border:2px solid;background:#ffffff;box-sizing:border-box;z-index:2;}
+.au-event.dream::before{border-color:#c2507a;}
+.au-event.canon::before{border-color:#3d72b4;}
+.au-event.turn::before{border-color:#c47b2a;background:#c47b2a;}
+.au-date{font-size:11px;font-weight:600;color:#9a9490;margin-bottom:2px;display:flex;align-items:center;gap:6px;line-height:1;}
+.au-title{font-size:14px;font-weight:400;color:#1a1816;margin-bottom:2px;line-height:1.4;word-break:keep-all;}
+.au-desc{font-size:12.5px;color:#5a5652;line-height:1.55;white-space:pre-wrap;word-break:keep-all;}
+.au-badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;line-height:1;flex-shrink:0;}
+.badge-dream{background:#fdf2f6;color:#c2507a;border:1px solid #f5d0de;}
+.badge-canon{background:#f0f5fd;color:#3d72b4;border:1px solid #c8d9f5;}
+.badge-turn{background:#fef8f0;color:#c47b2a;border:1px solid #f5ddb8;}
+.au-event.style-highlight .au-title{font-size:14.5px;font-weight:800;color:#000000;}
+.au-event.style-highlight::before{border-width:3px;width:13px;height:13px;left:-30px;top:3px;}
+.au-event.style-dimmed .au-title{color:#c5c0ba;font-weight:400;}
+.au-event.style-dimmed .au-desc,.au-event.style-dimmed .au-date{color:#c5c0ba;}
+.au-event.style-dimmed::before{border-color:#e8e5df !important;}
+.au-event.style-dimmed .au-badge{background:#f0ede8 !important;color:#c5c0ba !important;border-color:#e8e5df !important;}
+.event-controls{display:flex;gap:3px;margin-top:6px;opacity:0;transition:opacity 0.15s;pointer-events:none;}
+.au-event:hover .event-controls{opacity:1;pointer-events:auto;}
+
+/* ─ 서사 토글 (모바일) ─ */
+.narrative-toggle{display:none;}
+.narrative-body{display:block;}
+
+/* ─ 뷰 클래스 ─ */
+/* 기본 PC: era-content = row */
+#eraContainer .era-content{flex-direction:row;}
+
+/* 양날개: era-content row 유지, timeline-inner 안에서 좌우 분리 */
+#eraContainer.view-split .era-content{flex-direction:row;}
+#eraContainer.view-split .narrative-area{border-left:1px solid #f0ede8;}
+#eraContainer.view-split .timeline-inner{padding-left:0;border-left:none;align-items:center;position:relative;margin-left:0;}
+#eraContainer.view-split .timeline-inner::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;background:#e8e5df;transform:translateX(-50%);}
+#eraContainer.view-split .au-event{width:calc(50% - 28px);margin-bottom:24px;}
+#eraContainer.view-split .au-event.dream{align-self:flex-start;text-align:right;}
+#eraContainer.view-split .au-event.dream .au-date{justify-content:flex-end;}
+#eraContainer.view-split .au-event.dream .au-desc{text-align:right;}
+#eraContainer.view-split .au-event.dream .event-controls{justify-content:flex-end;}
+#eraContainer.view-split .au-event.canon{align-self:flex-end;}
+#eraContainer.view-split .au-event::before{display:none;}
+#eraContainer.view-split .au-event::after{content:'';position:absolute;top:4px;width:11px;height:11px;background:#ffffff;border-radius:50%;border:2px solid;box-sizing:border-box;z-index:3;}
+#eraContainer.view-split .au-event.dream::after{right:-34px;border-color:#c2507a;}
+#eraContainer.view-split .au-event.canon::after{left:-34px;border-color:#3d72b4;}
+#eraContainer.view-split .au-event.style-highlight::after{border-width:3px;}
+#eraContainer.view-split .au-event.turn{width:100%;align-self:center;text-align:center;margin:4px 0 24px;}
+#eraContainer.view-split .au-event.turn .au-date{justify-content:center;}
+#eraContainer.view-split .au-event.turn::after{display:none;}
+
+/* ⭐ 분기점(turn) 텍스트 배경 마스킹 처리 (선이 글자를 가로지르지 않게) */
+#eraContainer.view-split .au-event.turn .event-inner {
+    background: #ffffff;
+    position: relative;
+    z-index: 5;
+    display: inline-block;
+    padding: 0 12px;
+}
+
+/* 드림만/원작만 */
+#eraContainer.view-dream .au-event.canon{display:none !important;}
+#eraContainer.view-canon .au-event.dream{display:none !important;}
+
+/* ⭐ 타임라인만 (전체 테두리 둥글게 적용 및 가로 구분선 제거) */
+#eraContainer.view-flow {
+    background: #ffffff;
+    border: 1px solid #e8e5df;
+    border-radius: 12px;
+    overflow: hidden;
+}
+#eraContainer.view-flow .era-block{border-radius:0;margin-bottom:0;box-shadow:none;border:none;background:transparent;overflow:visible;}
+#eraContainer.view-flow .era-header{display:none !important;}
+#eraContainer.view-flow .era-body{background:#ffffff;overflow:visible;display:block !important;} /* border-bottom 완전히 제거 */
+#eraContainer.view-flow .narrative-area{display:none !important;}
+#eraContainer.view-flow .timeline-area{width:100%;padding:20px 32px;}
+#eraContainer.view-flow .era-block:not(:last-child) .timeline-area{padding-bottom:0;}
+#eraContainer.view-flow .era-block:not(:first-child) .timeline-area{padding-top:0;}
+#eraContainer.view-flow .event-controls{display:none !important;}
+
+/* ⭐ 서사만 (여백 최소화 및 토글 정상 작동) */
+#eraContainer.view-narr .era-header{padding:10px 14px;} /* 헤더 여백 축소 */
+#eraContainer.view-narr .era-block{margin-bottom:12px;}
+#eraContainer.view-narr .timeline-area{display:none !important;}
+#eraContainer.view-narr .era-content{flex-direction:column !important;}
+#eraContainer.view-narr .narrative-area{border-left:none !important;width:100% !important;padding:0 !important;}
+#eraContainer.view-narr .era-ctrl-btns{display:none;}
+#eraContainer.view-narr .event-controls{display:none !important;}
+#eraContainer.view-narr .narrative-toggle{display:none !important;}
+#eraContainer.view-narr .narrative-body{display:block !important;padding:12px 16px !important;} /* 내부 여백 대폭 축소 */
+
+/* ─ 모달 ─ */
+#exportModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;z-index:1000;padding:20px;}
+#exportModal.open{display:flex;}
+.modal-box{background:#ffffff;padding:32px;border-radius:16px;width:100%;max-width:780px;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,0.18);}
+.modal-box h2{font-size:18px;font-weight:700;margin-bottom:6px;}
+.modal-box p{font-size:12.5px;color:#9a9490;margin-bottom:16px;line-height:1.6;}
+#exportCode{flex:1;min-height:220px;font-family:'Courier New',monospace;padding:14px;border:1px solid #e8e5df;border-radius:8px;font-size:12px;background:#f9f8f6;color:#5a5652;resize:none;margin-bottom:16px;}
+.modal-btns{display:flex;gap:8px;}
+
+/* ─ 모바일 ─ */
+@media (max-width:768px){
+.app-header p{display:none;}
+.app-body{flex-direction:column;}
+.form-panel{width:100%;position:static;height:auto;border-right:none;border-bottom:1px solid #e8e5df;padding:16px;}
+.preview-panel{padding:16px 12px 40px;}
+#eraContainer .era-content{flex-direction:column !important;}
+.narrative-area{border-left:none;border-top:none;padding:0;}
+.timeline-area{padding:16px;}
+.narrative-toggle{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;cursor:pointer;-webkit-user-select:none;user-select:none;background:#f9f8f6;border-top:1px solid #f0ede8;border-bottom:1px solid #f0ede8;-webkit-tap-highlight-color:transparent;}
+.narrative-toggle-label{font-size:12px;font-weight:700;color:#5a5652;}
+.narrative-toggle-icon{width:20px;height:20px;border:1.5px solid #e8e5df;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#9a9490;background:#ffffff;transition:transform 0.25s;flex-shrink:0;}
+.narrative-body{padding:16px;}
+.narrative-area.narr-closed .narrative-toggle{border-bottom:none;}
+.narrative-area.narr-closed .narrative-toggle-icon{transform:rotate(-90deg);}
+.narrative-area.narr-closed .narrative-body{display:none;}
+#eraContainer.view-split .narrative-area{border-left:none;border-top:none;padding:0;}
+#eraContainer.view-split .au-event{width:calc(50% - 20px);margin-bottom:20px;}
+#eraContainer.view-split .au-event.dream::after{right:-26px;}
+#eraContainer.view-split .au-event.canon::after{left:-26px;}
+#eraContainer.view-split .au-event.turn{width:100%;}
+.tab-btn{padding:6px 10px;font-size:11px;}
+.tabs-divider{display:none;}
+.event-controls{opacity:1;pointer-events:auto;}
+#eraContainer.view-narr .narrative-area{padding:16px !important;}
+#eraContainer.view-narr .narrative-toggle{display:none !important;}
+#eraContainer.view-narr .narrative-body{display:block !important;padding:12px 16px !important;}
+#eraContainer.view-flow .timeline-area{padding:16px 20px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <div>
+      <h1>드림 서사 정리기</h1>
+      <p>드림 타임라인 · 원작 타임라인 · 챕터별 서사</p>
+    </div>
+  </header>
+  <div class="app-body">
+    <aside class="form-panel">
+      <div class="form-section">
+        <div class="section-title">챕터 만들기</div>
+        <div class="form-group">
+          <label class="form-label">챕터 이름</label>
+          <input type="text" id="eraTitle" placeholder="예: 유년기, 세계 대전…">
+        </div>
+        <div class="form-group">
+          <label class="form-label">줄글 서사</label>
+          <textarea id="eraNarrative" style="min-height:100px;" placeholder="이 시기의 서사를 적어주세요."></textarea>
+          <div class="form-hint">엔터로 문단 구분 · <em># </em>으로 소제목</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">관계성 요약 <span style="color:#9a9490;font-weight:400;">(선택)</span></label>
+          <textarea id="eraRel" style="min-height:60px;" placeholder="예: 데면데면한 동네 이웃…"></textarea>
+        </div>
+        <button class="btn btn-primary" id="btnEra" onclick="submitEra()">챕터 생성</button>
+      </div>
+      <div class="form-section">
+        <div class="section-title">사건 기록</div>
+        <div class="form-group">
+          <label class="form-label">추가할 챕터</label>
+          <select id="eraSelect"><option value="">챕터를 먼저 만들어주세요</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">사건 속성</label>
+          <div class="btn-group" id="evtTypeGroup">
+            <div class="btn-opt sel-dream" data-val="dream" onclick="pickOpt('evtTypeGroup',this)">🌸 드림</div>
+            <div class="btn-opt" data-val="canon" onclick="pickOpt('evtTypeGroup',this)">📘 원작</div>
+            <div class="btn-opt" data-val="turn" onclick="pickOpt('evtTypeGroup',this)">분기점</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">강조 스타일 <span style="color:#9a9490;font-weight:400;">(선택)</span></label>
+          <div class="btn-group" id="evtStyleGroup">
+            <div class="btn-opt sel-def" data-val="default" onclick="pickOpt('evtStyleGroup',this)">기본</div>
+            <div class="btn-opt" data-val="highlight" onclick="pickOpt('evtStyleGroup',this)">✨ 강조</div>
+            <div class="btn-opt" data-val="dimmed" onclick="pickOpt('evtStyleGroup',this)">🌫️ 흐리게</div>
+          </div>
+        </div>
+        <div class="form-group"><input type="text" id="evtDate" placeholder="시점 (예: 유년기 초반)"></div>
+        <div class="form-group"><input type="text" id="evtTitle" placeholder="사건 제목"></div>
+        <div class="form-group"><textarea id="evtContent" placeholder="사건 상세 내용"></textarea></div>
+        <button class="btn btn-secondary" id="btnEvent" onclick="submitEvent()">사건 추가</button>
+      </div>
+      <button class="btn btn-export" onclick="openExport()">완성 코드 내보내기 →</button>
+    </aside>
+
+    <main class="preview-panel">
+      <div class="view-tabs-wrap">
+        <div class="view-tabs-group">
+          <div class="view-tabs">
+            <button class="tab-btn tb-split active-filter" onclick="setView('split')">양날개</button>
+            <button class="tab-btn tb-mixed" onclick="setView('mixed')">통합</button>
+            <button class="tab-btn tb-dream" onclick="setView('dream')">드림만</button>
+            <button class="tab-btn tb-canon" onclick="setView('canon')">원작만</button>
+          </div>
+          <div class="tabs-divider"></div>
+          <div class="view-tabs view-tabs-mode">
+            <button class="tab-btn tb-flow" onclick="setView('flow')">타임라인만</button>
+            <button class="tab-btn tb-narr" onclick="setView('narr')">서사만</button>
+          </div>
+        </div>
+        <div class="view-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#c2507a;"></div>드림</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#3d72b4;"></div>원작</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#c47b2a;"></div>분기점</div>
+        </div>
+      </div>
+      <div id="eraContainer" class="view-split">
+        <div class="empty-state"><div class="icon">✦</div><p>왼쪽에서 챕터를 생성하면 여기에 나타납니다.</p></div>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<div id="exportModal">
+  <div class="modal-box">
+    <h2>코드 내보내기</h2>
+    <p>아래 코드를 복사해서 티스토리 HTML 모드에 붙여넣으세요.</p>
+    <textarea id="exportCode" readonly></textarea>
+    <div class="modal-btns">
+      <button class="btn btn-primary" style="flex:2;margin:0;" onclick="copyCode()">복사하기</button>
+      <button class="btn btn-secondary" style="flex:1;margin:0;" onclick="closeExport()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── 상태 ──
+var eras = [];
+var editingEraId = null;
+var editingEvt = null;
+var curFilter = 'split';
+var curMode = '';
+
+// ── 유틸 ──
+function uid() {
+  return 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+}
+
+function parseNarrative(text) {
+  if (!text) return '';
+  text = text.replace(/\n{3,}/g, '\n\n');
+  var parts = text.split('\n');
+  var result = '';
+  for (var i = 0; i < parts.length; i++) {
+    var line = parts[i].trim();
+    if (!line) {
+      result += '<div class="au-spacer"></div>';
+    } else if (line.indexOf('# ') === 0) {
+      result += '<div class="au-subtitle">' + line.slice(2) + '</div>';
+    } else {
+      result += '<div class="au-p">' + line + '</div>';
+    }
+  }
+  return result;
+}
+
+// ── 커스텀 옵션 선택 ──
+function pickOpt(groupId, el) {
+  var group = document.getElementById(groupId);
+  if (!group) return;
+  var btns = group.querySelectorAll('.btn-opt');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].className = 'btn-opt';
+  }
+  var val = el.getAttribute('data-val');
+  if (groupId === 'evtTypeGroup') {
+    if (val === 'dream') el.className = 'btn-opt sel-dream';
+    else if (val === 'canon') el.className = 'btn-opt sel-canon';
+    else if (val === 'turn') el.className = 'btn-opt sel-turn';
+  } else {
+    if (val === 'default') el.className = 'btn-opt sel-def';
+    else if (val === 'highlight') el.className = 'btn-opt sel-high';
+    else if (val === 'dimmed') el.className = 'btn-opt sel-dim';
+  }
+}
+
+function getOptVal(groupId) {
+  var group = document.getElementById(groupId);
+  if (!group) return '';
+  var btns = group.querySelectorAll('.btn-opt');
+  for (var i = 0; i < btns.length; i++) {
+    var cls = btns[i].className;
+    if (cls.indexOf('sel-') !== -1) {
+      return btns[i].getAttribute('data-val');
+    }
+  }
+  return '';
+}
+
+function setOptVal(groupId, val) {
+  var group = document.getElementById(groupId);
+  if (!group) return;
+  var btns = group.querySelectorAll('.btn-opt');
+  for (var i = 0; i < btns.length; i++) {
+    if (btns[i].getAttribute('data-val') === val) {
+      pickOpt(groupId, btns[i]);
+      return;
+    }
+  }
+}
+
+// ── 뷰 전환 ──
+var filterViews = ['split', 'mixed', 'dream', 'canon'];
+function isFilterView(v) {
+  for (var i = 0; i < filterViews.length; i++) {
+    if (filterViews[i] === v) return true;
+  }
+  return false;
+}
+
+function setView(v) {
+  if (isFilterView(v)) {
+    curFilter = v;
+    curMode = '';
+  } else {
+    curMode = (curMode === v) ? '' : v;
+  }
+  applyView();
+}
+
+function applyView() {
+  var container = document.getElementById('eraContainer');
+  container.className = 'view-' + curFilter + (curMode ? ' view-' + curMode : '');
+  var tabs = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].classList.remove('active-filter', 'active-mode');
+    var m = tabs[i].className.match(/tb-(\w+)/);
+    if (!m) continue;
+    var bv = m[1];
+    if (bv === curFilter) tabs[i].classList.add('active-filter');
+    else if (bv === curMode) tabs[i].classList.add('active-mode');
+  }
+  if (curMode === 'narr') {
+    var blocks = document.querySelectorAll('.era-block.collapsed');
+    for (var j = 0; j < blocks.length; j++) {
+      blocks[j].className = blocks[j].className.replace(' collapsed', '').replace('collapsed', '');
+      var body = blocks[j].querySelector('.era-body');
+      if (body) body.style.display = '';
+    }
+    var nareas = document.querySelectorAll('.narrative-area');
+    for (var k = 0; k < nareas.length; k++) {
+      nareas[k].className = nareas[k].className.replace(' narr-closed', '').replace('narr-closed', '');
+      var nb = nareas[k].querySelector('.narrative-body');
+      if (nb) nb.style.display = '';
+    }
+  }
+}
+
+// ── 챕터 토글 ──
+function toggleEra(id) {
+  var idx = -1;
+  for (var i = 0; i < eras.length; i++) {
+    if (eras[i].id === id) { idx = i; break; }
+  }
+  if (idx === -1) return;
+  var block = document.getElementById('era-' + id);
+  if (!block) return;
+  var body = block.querySelector('.era-body');
+  if (eras[idx].collapsed) {
+    eras[idx].collapsed = false;
+    block.className = block.className.replace(' collapsed', '').replace('collapsed ', '');
+    if (body) body.style.display = '';
+  } else {
+    eras[idx].collapsed = true;
+    if (block.className.indexOf('collapsed') === -1) block.className += ' collapsed';
+    if (body) body.style.display = 'none';
+  }
+}
+
+// ── 서사 토글 (모바일) ──
+function toggleNarr(id) {
+  var area = document.getElementById('narr-' + id);
+  if (!area) return;
+  var body = area.querySelector('.narrative-body');
+  if (!body) return;
+  if (area.className.indexOf('narr-closed') !== -1) {
+    area.className = area.className.replace(' narr-closed', '').replace('narr-closed', '');
+    body.style.display = '';
+  } else {
+    if (area.className.indexOf('narr-closed') === -1) area.className += ' narr-closed';
+    body.style.display = 'none';
+  }
+}
+
+// ── 챕터 CRUD ──
+function submitEra() {
+  var title = document.getElementById('eraTitle').value.trim();
+  if (!title) { alert('챕터 이름을 입력해주세요!'); return; }
+  var rel = document.getElementById('eraRel').value.trim();
+  var narrative = document.getElementById('eraNarrative').value.trim();
+  if (editingEraId) {
+    for (var i = 0; i < eras.length; i++) {
+      if (eras[i].id === editingEraId) {
+        eras[i].title = title;
+        eras[i].rel = rel;
+        eras[i].narrative = narrative;
+        break;
+      }
+    }
+    editingEraId = null;
+    document.getElementById('btnEra').textContent = '챕터 생성';
+  } else {
+    eras.push({ id: uid(), title: title, rel: rel, narrative: narrative, events: [], collapsed: false });
+  }
+  document.getElementById('eraTitle').value = '';
+  document.getElementById('eraRel').value = '';
+  document.getElementById('eraNarrative').value = '';
+  syncSelects();
+  render();
+}
+
+function editEra(id) {
+  for (var i = 0; i < eras.length; i++) {
+    if (eras[i].id === id) {
+      document.getElementById('eraTitle').value = eras[i].title;
+      document.getElementById('eraRel').value = eras[i].rel || '';
+      document.getElementById('eraNarrative').value = eras[i].narrative || '';
+      break;
+    }
+  }
+  editingEraId = id;
+  document.getElementById('btnEra').textContent = '챕터 수정 완료';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function removeEra(id) {
+  setTimeout(function() {
+    if (!confirm('이 챕터와 모든 사건을 삭제할까요?')) return;
+    var newEras = [];
+    for (var i = 0; i < eras.length; i++) {
+      if (eras[i].id !== id) newEras.push(eras[i]);
+    }
+    eras = newEras;
+    if (editingEraId === id) {
+      editingEraId = null;
+      document.getElementById('btnEra').textContent = '챕터 생성';
+      document.getElementById('eraTitle').value = '';
+      document.getElementById('eraRel').value = '';
+      document.getElementById('eraNarrative').value = '';
+    }
+    syncSelects();
+    render();
+  }, 0);
+}
+
+function moveEra(id, dir) {
+  var i = -1;
+  for (var j = 0; j < eras.length; j++) {
+    if (eras[j].id === id) { i = j; break; }
+  }
+  if (i === -1 || i + dir < 0 || i + dir >= eras.length) return;
+  var tmp = eras[i];
+  eras[i] = eras[i + dir];
+  eras[i + dir] = tmp;
+  syncSelects();
+  render();
+}
+
+// ── 사건 CRUD ──
+function submitEvent() {
+  var eraId = document.getElementById('eraSelect').value;
+  if (!eraId) { alert('챕터를 선택해주세요!'); return; }
+  var title = document.getElementById('evtTitle').value.trim();
+  if (!title) { alert('사건 제목을 입력해주세요!'); return; }
+  var type = getOptVal('evtTypeGroup') || 'dream';
+  var styleMode = getOptVal('evtStyleGroup') || 'default';
+  var date = document.getElementById('evtDate').value.trim();
+  var content = document.getElementById('evtContent').value.trim();
+  if (editingEvt) {
+    var oldEraIdx = -1;
+    for (var i = 0; i < eras.length; i++) {
+      if (eras[i].id === editingEvt.eraId) { oldEraIdx = i; break; }
+    }
+    if (oldEraIdx !== -1) {
+      var evtIdx = -1;
+      for (var j = 0; j < eras[oldEraIdx].events.length; j++) {
+        if (eras[oldEraIdx].events[j].id === editingEvt.evtId) { evtIdx = j; break; }
+      }
+      if (evtIdx !== -1) {
+        var updEvt = { id: editingEvt.evtId, type: type, styleMode: styleMode, date: date, title: title, content: content };
+        if (editingEvt.eraId === eraId) {
+          eras[oldEraIdx].events[evtIdx] = updEvt;
+        } else {
+          eras[oldEraIdx].events.splice(evtIdx, 1);
+          for (var k = 0; k < eras.length; k++) {
+            if (eras[k].id === eraId) { eras[k].events.push(updEvt); break; }
+          }
+        }
+      }
+    }
+    editingEvt = null;
+    document.getElementById('btnEvent').textContent = '사건 추가';
+  } else {
+    for (var m = 0; m < eras.length; m++) {
+      if (eras[m].id === eraId) {
+        eras[m].events.push({ id: uid(), type: type, styleMode: styleMode, date: date, title: title, content: content });
+        break;
+      }
+    }
+  }
+  document.getElementById('evtDate').value = '';
+  document.getElementById('evtTitle').value = '';
+  document.getElementById('evtContent').value = '';
+  setOptVal('evtTypeGroup', 'dream');
+  setOptVal('evtStyleGroup', 'default');
+  render();
+}
+
+function editEvent(eraId, evtId) {
+  var evt = null;
+  for (var i = 0; i < eras.length; i++) {
+    if (eras[i].id === eraId) {
+      for (var j = 0; j < eras[i].events.length; j++) {
+        if (eras[i].events[j].id === evtId) { evt = eras[i].events[j]; break; }
+      }
+      break;
+    }
+  }
+  if (!evt) return;
+  document.getElementById('eraSelect').value = eraId;
+  setOptVal('evtTypeGroup', evt.type);
+  setOptVal('evtStyleGroup', evt.styleMode);
+  document.getElementById('evtDate').value = evt.date;
+  document.getElementById('evtTitle').value = evt.title;
+  document.getElementById('evtContent').value = evt.content;
+  editingEvt = { eraId: eraId, evtId: evtId };
+  document.getElementById('btnEvent').textContent = '사건 수정 완료';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function removeEvent(eraId, evtId) {
+  setTimeout(function() {
+    if (!confirm('이 사건을 삭제할까요?')) return;
+    for (var i = 0; i < eras.length; i++) {
+      if (eras[i].id === eraId) {
+        var newEvts = [];
+        for (var j = 0; j < eras[i].events.length; j++) {
+          if (eras[i].events[j].id !== evtId) newEvts.push(eras[i].events[j]);
+        }
+        eras[i].events = newEvts;
+        break;
+      }
+    }
+    if (editingEvt && editingEvt.evtId === evtId) {
+      editingEvt = null;
+      document.getElementById('btnEvent').textContent = '사건 추가';
+    }
+    render();
+  }, 0);
+}
+
+function moveEvent(eraId, evtId, dir) {
+  for (var i = 0; i < eras.length; i++) {
+    if (eras[i].id === eraId) {
+      var idx = -1;
+      for (var j = 0; j < eras[i].events.length; j++) {
+        if (eras[i].events[j].id === evtId) { idx = j; break; }
+      }
+      if (idx === -1 || idx + dir < 0 || idx + dir >= eras[i].events.length) return;
+      var tmp = eras[i].events[idx];
+      eras[i].events[idx] = eras[i].events[idx + dir];
+      eras[i].events[idx + dir] = tmp;
+      render();
+      return;
+    }
+  }
+}
+
+function syncSelects() {
+  var sel = document.getElementById('eraSelect');
+  var cur = sel.value;
+  sel.innerHTML = eras.length === 0 ? '<option value="">챕터를 먼저 만들어주세요</option>' : '';
+  for (var i = 0; i < eras.length; i++) {
+    var o = document.createElement('option');
+    o.value = eras[i].id;
+    o.text = eras[i].title;
+    sel.appendChild(o);
+  }
+  var stillExists = false;
+  for (var j = 0; j < eras.length; j++) {
+    if (eras[j].id === cur) { stillExists = true; break; }
+  }
+  if (stillExists) sel.value = cur;
+}
+
+// ── 렌더링 ──
+function badge(type) {
+  if (type === 'dream') return '<span class="au-badge badge-dream">드림</span>';
+  if (type === 'canon') return '<span class="au-badge badge-canon">원작</span>';
+  return '<span class="au-badge badge-turn">분기점</span>';
+}
+
+function render() {
+  var container = document.getElementById('eraContainer');
+  var viewClass = container.className;
+  if (eras.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">✦</div><p>왼쪽에서 챕터를 생성하면 여기에 나타납니다.</p></div>';
+    container.className = viewClass;
+    return;
+  }
+  container.innerHTML = '';
+  container.className = viewClass;
+  for (var ei = 0; ei < eras.length; ei++) {
+    var era = eras[ei];
+    var evHtml = '';
+    if (era.events.length === 0) {
+      evHtml = '<div style="color:#9a9490;font-size:12px;padding:8px 0;text-align:center;">기록된 사건이 없습니다.</div>';
+    } else {
+      for (var vi = 0; vi < era.events.length; vi++) {
+        var evt = era.events[vi];
+        var sc = evt.styleMode === 'highlight' ? 'style-highlight' : evt.styleMode === 'dimmed' ? 'style-dimmed' : '';
+        var evClass = 'au-event ' + evt.type + (sc ? ' ' + sc : '');
+        evHtml += '<div class="' + evClass + '">';
+        evHtml += '<div class="event-inner">';
+        evHtml += '<div class="au-date">' + badge(evt.type) + ' ' + evt.date + '</div>';
+        evHtml += '<div class="au-title">' + evt.title + '</div>';
+        if (evt.content) evHtml += '<div class="au-desc">' + evt.content + '</div>';
+        evHtml += '</div>';
+        evHtml += '<div class="event-controls">';
+        evHtml += '<button class="ctrl-btn" onclick="moveEvent(\'' + era.id + '\',\'' + evt.id + '\',-1)"' + (vi === 0 ? ' disabled' : '') + '>▲</button>';
+        evHtml += '<button class="ctrl-btn" onclick="moveEvent(\'' + era.id + '\',\'' + evt.id + '\',1)"' + (vi === era.events.length - 1 ? ' disabled' : '') + '>▼</button>';
+        evHtml += '<button class="ctrl-btn" onclick="editEvent(\'' + era.id + '\',\'' + evt.id + '\')">수정</button>';
+        evHtml += '<button class="ctrl-btn danger" onclick="removeEvent(\'' + era.id + '\',\'' + evt.id + '\')">삭제</button>';
+        evHtml += '</div></div>';
+      }
+    }
+    var nh = parseNarrative(era.narrative) || '<div class="au-p" style="color:#9a9490;">이 시기의 서사가 아직 없습니다.</div>';
+    var rh = era.rel ? '<div class="rel-box"><span class="rel-label">이 시기의 관계성</span><div class="rel-text">' + era.rel.replace(/\n/g, '<br>') + '</div></div>' : '';
+    var dc = 0, cc = 0;
+    for (var mi = 0; mi < era.events.length; mi++) {
+      if (era.events[mi].type === 'dream') dc++;
+      else if (era.events[mi].type === 'canon') cc++;
+    }
+    var meta = (dc ? '드림 ' + dc + '건' : '') + (dc && cc ? ' · ' : '') + (cc ? '원작 ' + cc + '건' : '');
+    var block = document.createElement('div');
+    block.className = 'era-block' + (era.collapsed ? ' collapsed' : '');
+    block.id = 'era-' + era.id;
+    block.innerHTML =
+      '<div class="era-header" onclick="toggleEra(\'' + era.id + '\')">' +
+        '<div class="era-toggle-btn">▼</div>' +
+        '<div class="era-title-group">' +
+          '<div class="era-title">' + era.title + '</div>' +
+          (meta ? '<div class="era-meta">' + meta + '</div>' : '') +
+        '</div>' +
+        '<div class="era-ctrl-btns">' +
+          '<button class="ctrl-btn" onclick="event.stopPropagation();moveEra(\'' + era.id + '\',-1)"' + (ei === 0 ? ' disabled' : '') + '>↑</button>' +
+          '<button class="ctrl-btn" onclick="event.stopPropagation();moveEra(\'' + era.id + '\',1)"' + (ei === eras.length - 1 ? ' disabled' : '') + '>↓</button>' +
+          '<button class="ctrl-btn" onclick="event.stopPropagation();editEra(\'' + era.id + '\')">수정</button>' +
+          '<button class="ctrl-btn danger" onclick="event.stopPropagation();removeEra(\'' + era.id + '\')">삭제</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="era-body"' + (era.collapsed ? ' style="display:none;"' : '') + '>' +
+        '<div class="era-content">' +
+          '<div class="timeline-area">' +
+            '<div class="timeline-inner">' + evHtml + '</div>' +
+          '</div>' +
+          '<div class="narrative-area" id="narr-' + era.id + '">' +
+            '<div class="narrative-toggle" onclick="toggleNarr(\'' + era.id + '\')">' +
+              '<span class="narrative-toggle-label">서사 보기</span>' +
+              '<span class="narrative-toggle-icon">▼</span>' +
+            '</div>' +
+            '<div class="narrative-body">' +
+              '<div class="narrative-content">' + nh + '</div>' +
+              rh +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    container.appendChild(block);
+  }
+}
+
+// ── 내보내기 ──
+function openExport() {
+  var CSS = "@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');\n"
+  + ".sw{font-family:'Noto Sans KR',sans-serif;word-break:keep-all;}\n"
+  + ".sw *{box-sizing:border-box;}\n"
+  + ".sw-tg{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:20px;}\n"
+  + ".sw-tabs{display:flex;background:#fff;border:1px solid #e8e5df;border-radius:12px;padding:3px;gap:2px;}\n"
+  + ".sw-tabs.mode{background:#f7f6f3;border-color:#f0ede8;}\n"
+  + ".sw-div{width:1px;height:22px;background:#e8e5df;margin:0 4px;flex-shrink:0;}\n"
+  + ".sw-tab{padding:7px 14px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;color:#9a9490;border:none;background:none;font-family:'Noto Sans KR',sans-serif;white-space:nowrap;-webkit-tap-highlight-color:transparent;}\n"
+  + ".sw-tab.on{background:#f9f8f6;color:#1a1816;box-shadow:0 1px 4px rgba(0,0,0,.08);}\n"
+  + ".sw-tab.dream.on{background:#fdf2f6;color:#c2507a;}\n"
+  + ".sw-tab.canon.on{background:#f0f5fd;color:#3d72b4;}\n"
+  + ".sw-tab.flow.on{background:#f0f4fe;color:#3d72b4;}\n"
+  + ".sw-tab.narr.on{background:#f5f0fc;color:#7c5cbf;}\n"
+  + ".sw.vd .ev.canon,.sw.vc .ev.dream{display:none !important;}\n"
+  + ".sw-era{margin-bottom:16px;background:#fff;border:1px solid #e8e5df;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.06);}\n"
+  + ".sw-hd{padding:14px 20px;background:#f9f8f6;border-bottom:1px solid #f0ede8;font-size:15px;font-weight:700;color:#1a1816;cursor:pointer;display:flex;align-items:center;gap:10px;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;}\n"
+  + ".sw-arr{width:20px;height:20px;border:1.5px solid #e8e5df;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#9a9490;background:#fff;flex-shrink:0;transition:transform .25s;}\n"
+  + ".sw-era.cl .sw-arr{transform:rotate(-90deg);}\n"
+  + ".sw-era.cl .sw-hd{border-bottom:none;}\n"
+  + ".sw-body{overflow:hidden;opacity:1;}\n"
+  + ".sw-era.cl .sw-body{display:none;}\n"
+  + ".sw-ct{display:flex;flex-direction:row;align-items:stretch;}\n"
+  + ".sw-tl{flex:1;padding:20px 24px;min-width:0;}\n"
+  + ".sw-na{flex:1;padding:20px 24px;border-left:1px solid #f0ede8;background:#fdfcfa;min-width:0;}\n"
+  + ".sw-ntog{display:none;}\n"
+  + ".sw-nbody{display:block;}\n"
+  + ".sw.vs .sw-ct{flex-direction:row;}\n"
+  + ".sw.vs .sw-na{border-left:1px solid #f0ede8;}\n"
+  + ".sw.vs .sw-tl-inner{padding-left:0 !important;border-left:none !important;align-items:center !important;position:relative !important;margin-left:0 !important;}\n"
+  + ".sw.vs .sw-tl-inner::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;background:#e8e5df;transform:translateX(-50%);}\n"
+  + ".sw.vs .ev{width:calc(50% - 28px) !important;margin-bottom:24px !important;}\n"
+  + ".sw.vs .ev.dream{align-self:flex-start !important;text-align:right !important;}\n"
+  + ".sw.vs .ev.dream .ev-date{justify-content:flex-end !important;}\n"
+  + ".sw.vs .ev.dream .ev-desc{text-align:right !important;}\n"
+  + ".sw.vs .ev.canon{align-self:flex-end !important;}\n"
+  + ".sw.vs .ev::before{display:none !important;}\n"
+  + ".sw.vs .ev::after{content:'';position:absolute;top:4px;width:11px;height:11px;background:#fff;border-radius:50%;border:2px solid;box-sizing:border-box;z-index:3;}\n"
+  + ".sw.vs .ev.dream::after{right:-34px;border-color:#c2507a;}\n"
+  + ".sw.vs .ev.canon::after{left:-34px;border-color:#3d72b4;}\n"
+  + ".sw.vs .ev.style-highlight::after{border-width:3px;}\n"
+  + ".sw.vs .ev.turn{width:100% !important;align-self:center !important;text-align:center !important;margin:4px 0 24px !important;}\n"
+  + ".sw.vs .ev.turn .ev-date{justify-content:center !important;}\n"
+  + ".sw.vs .ev.turn::after{display:none !important;}\n"
+  + ".sw.vs .ev.turn .ev-inner{background:#fff;display:inline-block;position:relative;z-index:5;padding:0 12px;}\n"
+  + ".sw.vf .sw-era-wrap{border:1px solid #e8e5df;border-radius:12px;background:#fff;overflow:hidden;}\n"
+  + ".sw.vf .sw-era{border:none !important;border-radius:0 !important;margin-bottom:0 !important;box-shadow:none !important;background:transparent !important;}\n"
+  + ".sw.vf .sw-hd{display:none !important;}\n"
+  + ".sw.vf .sw-era.cl .sw-body{display:block !important;}\n"
+  + ".sw.vf .sw-body{background:#fff;overflow:visible;display:block !important;}\n"
+  + ".sw.vf .sw-na{display:none !important;}\n"
+  + ".sw.vf .sw-tl{width:100% !important;padding:20px 32px !important;flex:none !important;}\n"
+  + ".sw.vf .sw-era:not(:first-child) .sw-tl{padding-top:0 !important;}\n"
+  + ".sw.vf .sw-era:not(:last-child) .sw-tl{padding-bottom:0 !important;}\n"
+  + ".sw.vn .sw-era{margin-bottom:12px;}\n"
+  + ".sw.vn .sw-hd{padding:10px 14px;}\n"
+  + ".sw.vn .sw-tl{display:none !important;}\n"
+  + ".sw.vn .sw-ct{flex-direction:column !important;}\n"
+  + ".sw.vn .sw-na{border-left:none !important;padding:12px 16px !important;flex:none !important;width:100%;}\n"
+  + ".sw.vn .sw-ntog{display:none !important;}\n"
+  + ".sw.vn .sw-nbody{display:block !important;}\n"
+  + "@media(max-width:768px){\n"
+  + "  .sw-ct{flex-direction:column !important;}\n"
+  + "  .sw-na{border-left:none !important;border-top:none !important;padding:0 !important;}\n"
+  + "  .sw-tl{padding:16px !important;}\n"
+  + "  .sw-ntog{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;cursor:pointer;-webkit-user-select:none;user-select:none;background:#f9f8f6;border-top:1px solid #f0ede8;border-bottom:1px solid #f0ede8;-webkit-tap-highlight-color:transparent;}\n"
+  + "  .sw-ntog-label{font-size:12px;font-weight:700;color:#5a5652;}\n"
+  + "  .sw-ntog-icon{width:20px;height:20px;border:1.5px solid #e8e5df;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#9a9490;background:#fff;transition:transform .25s;flex-shrink:0;}\n"
+  + "  .sw-nbody{padding:16px;}\n"
+  + "  .sw-na.cl .sw-ntog{border-bottom:none;}\n"
+  + "  .sw-na.cl .sw-ntog-icon{transform:rotate(-90deg);}\n"
+  + "  .sw-na.cl .sw-nbody{display:none;}\n"
+  + "  .sw.vs .sw-na{border-left:none !important;border-top:none !important;padding:0 !important;}\n"
+  + "  .sw.vn .sw-ntog{display:none !important;}\n"
+  + "  .sw.vn .sw-nbody{display:block !important;padding:16px !important;}\n"
+  + "  .sw.vf .sw-tl{padding:16px 20px !important;}\n"
+  + "}\n"
+  + ".sw-tl-inner{display:flex;flex-direction:column;position:relative;padding-left:22px;border-left:2px solid #e8e5df;margin-left:8px;}\n"
+  + ".ev{position:relative;margin-bottom:16px;width:100%;}\n"
+  + ".ev:last-child{margin-bottom:0;}\n"
+  + ".ev::before{content:'';position:absolute;left:-29px;top:4px;width:11px;height:11px;border-radius:50%;border:2px solid;background:#fff;box-sizing:border-box;z-index:2;}\n"
+  + ".ev.dream::before{border-color:#c2507a;}\n"
+  + ".ev.canon::before{border-color:#3d72b4;}\n"
+  + ".ev.turn::before{border-color:#c47b2a;background:#c47b2a;}\n"
+  + ".ev-date{font-size:11px;font-weight:600;color:#9a9490;margin-bottom:2px;display:flex;align-items:center;gap:6px;line-height:1;}\n"
+  + ".ev-title{font-size:14px;font-weight:400;color:#1a1816;margin-bottom:2px;line-height:1.4;word-break:keep-all;}\n"
+  + ".ev-desc{font-size:12.5px;color:#5a5652;line-height:1.55;word-break:keep-all;white-space:pre-wrap;}\n"
+  + ".badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;line-height:1;flex-shrink:0;}\n"
+  + ".bd{background:#fdf2f6;color:#c2507a;border:1px solid #f5d0de;}\n"
+  + ".bc{background:#f0f5fd;color:#3d72b4;border:1px solid #c8d9f5;}\n"
+  + ".bt{background:#fef8f0;color:#c47b2a;border:1px solid #f5ddb8;}\n"
+  + ".ev.hl .ev-title{font-size:14.5px;font-weight:800;color:#000;}\n"
+  + ".ev.hl::before{border-width:3px;width:13px;height:13px;left:-30px;top:3px;}\n"
+  + ".ev.dm .ev-title{color:#c5c0ba;font-weight:400;}\n"
+  + ".ev.dm .ev-desc,.ev.dm .ev-date{color:#c5c0ba;}\n"
+  + ".ev.dm::before{border-color:#e8e5df !important;}\n"
+  + ".ev.dm .badge{background:#f0ede8 !important;color:#c5c0ba !important;border-color:#e8e5df !important;}\n"
+  + ".nc{font-size:13.5px;color:#5a5652;}\n"
+  + ".np{margin:0 0 5px;line-height:1.65;color:#3a3632;}\n"
+  + ".ns{height:8px;}\n"
+  + ".nh{font-size:15px;font-weight:700;color:#1a1816;margin:18px 0 8px;padding-bottom:5px;border-bottom:1.5px solid #e8e5df;display:block;letter-spacing:-.3px;}\n"
+  + ".nh:first-child{margin-top:0;}\n"
+  + ".rel{background:#fdf2f6;border:1px dashed #f5d0de;border-radius:8px;padding:12px 16px;margin-top:16px;}\n"
+  + ".rel-label{font-size:13.5px;font-weight:700;color:#c2507a;margin-bottom:6px;display:block;}\n"
+  + ".rel-text{font-size:13px;color:#5a3048;line-height:1.65;}";
+
+  var hp = [];
+  hp.push('<link rel="preconnect" href="https://fonts.googleapis.com">');
+  hp.push('<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">');
+  hp.push('<style>' + CSS + '</style>');
+
+  hp.push('<div class="sw vs">');
+  hp.push('<div class="sw-tg">');
+  hp.push('<div class="sw-tabs"><button class="sw-tab on" onclick="sV(this,\'vs\')">양날개</button><button class="sw-tab" onclick="sV(this,\'vm\')">통합</button><button class="sw-tab dream" onclick="sV(this,\'vd\')">드림만</button><button class="sw-tab canon" onclick="sV(this,\'vc\')">원작만</button></div>');
+  hp.push('<div class="sw-div"></div>');
+  hp.push('<div class="sw-tabs mode"><button class="sw-tab flow" onclick="sV(this,\'vf\')">타임라인만</button><button class="sw-tab narr" onclick="sV(this,\'vn\')">서사만</button></div>');
+  hp.push('</div>');
+
+  hp.push('<div class="sw-era-wrap">');
+
+  for (var ei = 0; ei < eras.length; ei++) {
+    var era = eras[ei];
+    var evH = '';
+    for (var vi = 0; vi < era.events.length; vi++) {
+      var evt = era.events[vi];
+      var sc2 = evt.styleMode === 'highlight' ? ' hl' : evt.styleMode === 'dimmed' ? ' dm' : '';
+      var bt2 = evt.type === 'dream' ? '<span class="badge bd">드림</span>' : evt.type === 'canon' ? '<span class="badge bc">원작</span>' : '<span class="badge bt">분기점</span>';
+      evH += '<div class="ev ' + evt.type + sc2 + '">';
+      evH += '<div class="ev-inner">';
+      evH += '<div class="ev-date">' + bt2 + ' ' + evt.date + '</div>';
+      evH += '<div class="ev-title">' + evt.title + '</div>';
+      if (evt.content) evH += '<div class="ev-desc">' + evt.content + '</div>';
+      evH += '</div></div>';
+    }
+    var rawNh = parseNarrative(era.narrative) || '<div class="np" style="color:#9a9490;">이 시기의 서사가 아직 없습니다.</div>';
+    var nh2 = rawNh.replace(/class="au-p"/g, 'class="np"').replace(/class="au-spacer"/g, 'class="ns"').replace(/class="au-subtitle"/g, 'class="nh"');
+    var rh2 = era.rel ? '<div class="rel"><span class="rel-label">이 시기의 관계성</span><div class="rel-text">' + era.rel.replace(/\n/g, '<br>') + '</div></div>' : '';
+    
+    hp.push('<div class="sw-era">');
+    hp.push('<div class="sw-hd" onclick="sT(this)"><span class="sw-arr">▼</span>' + era.title + '</div>');
+    hp.push('<div class="sw-body">');
+    hp.push('<div class="sw-ct">');
+    hp.push('<div class="sw-tl"><div class="sw-tl-inner">' + evH + '</div></div>');
+    hp.push('<div class="sw-na">');
+    hp.push('<div class="sw-ntog" onclick="sN(this)"><span class="sw-ntog-label">서사 보기</span><span class="sw-ntog-icon">▼</span></div>');
+    hp.push('<div class="sw-nbody"><div class="nc">' + nh2 + '</div>' + rh2 + '</div>');
+    hp.push('</div></div></div></div>');
+  }
+  
+  hp.push('</div>');
+  hp.push('</div>');
+  
+  hp.push('<sc'+'ript>');
+  hp.push('var _sw,_cur="vs",_mode="";');
+  hp.push('var _F={"split":"vs","mixed":"vm","dream":"vd","canon":"vc"};');
+  hp.push('var _fv=["vs","vm","vd","vc"];');
+  hp.push('function _isFv(v){for(var i=0;i<_fv.length;i++){if(_fv[i]===v)return true;}return false;}');
+  hp.push('function sV(btn,v){');
+  hp.push('  if(!_sw)_sw=btn.closest?btn.closest(".sw"):findSw(btn);');
+  hp.push('  if(_isFv(v)){_cur=v;_mode="";}else{_mode=(_mode===v)?"":v;}');
+  hp.push('  var cls="sw "+_cur+(_mode?" "+_mode:"");');
+  hp.push('  _sw.className=cls;');
+  hp.push('  var tabs=_sw.querySelectorAll(".sw-tab");');
+  hp.push('  for(var i=0;i<tabs.length;i++){');
+  hp.push('    tabs[i].classList.remove("on");');
+  hp.push('    var oc=tabs[i].getAttribute("onclick")||"";');
+  hp.push('    if(oc.indexOf("\'"+_cur+"\'")!==-1 || (_mode && oc.indexOf("\'"+_mode+"\'")!==-1)){');
+  hp.push('      tabs[i].classList.add("on");');
+  hp.push('    }');
+  hp.push('  }');
+  hp.push('  if(_mode==="vn"){');
+  hp.push('    var eras=_sw.querySelectorAll(".sw-era.cl");');
+  hp.push('    for(var j=0;j<eras.length;j++){eras[j].className=eras[j].className.replace(" cl","").replace("cl","");var b=eras[j].querySelector(".sw-body");if(b)b.style.display="";}');
+  hp.push('    var nas=_sw.querySelectorAll(".sw-na.cl");');
+  hp.push('    for(var k=0;k<nas.length;k++){nas[k].className=nas[k].className.replace(" cl","").replace("cl","");var nb=nas[k].querySelector(".sw-nbody");if(nb)nb.style.display="";}');
+  hp.push('  }');
+  hp.push('}');
+  hp.push('function findSw(el){while(el){if(el.className&&el.className.indexOf("sw ")===0)return el;el=el.parentNode;}return null;}');
+  hp.push('function sT(hd){');
+  hp.push('  var era=hd.parentNode;');
+  hp.push('  var body=era.querySelector(".sw-body");');
+  hp.push('  if(era.className.indexOf("cl")!==-1){era.className=era.className.replace(" cl","").replace("cl","");if(body)body.style.display="";}');
+  hp.push('  else{if(era.className.indexOf("cl")===-1)era.className+=" cl";if(body)body.style.display="none";}');
+  hp.push('}');
+  hp.push('function sN(tog){');
+  hp.push('  var na=tog.parentNode;');
+  hp.push('  var nb=na.querySelector(".sw-nbody");');
+  hp.push('  if(na.className.indexOf("cl")!==-1){na.className=na.className.replace(" cl","").replace("cl","");if(nb)nb.style.display="";}');
+  hp.push('  else{if(na.className.indexOf("cl")===-1)na.className+=" cl";if(nb)nb.style.display="none";}');
+  hp.push('}');
+  hp.push('</sc'+'ript>');
+
+  document.getElementById('exportCode').value = hp.join('\n');
+  document.getElementById('exportModal').className = 'open';
+}
+
+function closeExport() {
+  document.getElementById('exportModal').className = '';
+}
+
+function copyCode() {
+  var ta = document.getElementById('exportCode');
+  ta.select();
+  ta.setSelectionRange(0, 99999);
+  try {
+    document.execCommand('copy');
+    alert('코드가 복사되었습니다!');
+  } catch(e) {
+    alert('복사에 실패했습니다. 직접 선택해서 복사해주세요.');
+  }
+}
+
+applyView();
+render();
+</script>
+
+</body>
+</html>
