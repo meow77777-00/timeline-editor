@@ -65,7 +65,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#9a9490;font-weight:500;}
 .legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 .empty-state{text-align:center;padding:80px 20px;background:#ffffff;border-radius:12px;border:1px solid #e8e5df;color:#9a9490;}
-.empty-state .icon{font-size:36px;margin-bottom:12px;}
+.empty-state .icon{display:flex;justify-content:center;margin-bottom:12px;}
 .empty-state p{font-size:14px;}
 
 /* ─ 챕터 블록 ─ */
@@ -135,7 +135,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 /* 기본 PC: era-content = row */
 #eraContainer .era-content{flex-direction:row;}
 
-/* 양날개: era-content row 유지, timeline-inner 안에서 좌우 분리 */
+/* 양갈래: era-content row 유지, timeline-inner 안에서 좌우 분리 */
 #eraContainer.view-split .era-content{flex-direction:row;}
 #eraContainer.view-split .narrative-area{border-left:1px solid #f0ede8;}
 #eraContainer.view-split .timeline-inner{padding-left:0;border-left:none;align-items:center;position:relative;margin-left:0;}
@@ -296,7 +296,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       <div class="view-tabs-wrap">
         <div class="view-tabs-group">
           <div class="view-tabs">
-            <button class="tab-btn tb-split active-filter" onclick="setView('split')">양날개</button>
+            <button class="tab-btn tb-split active-filter" onclick="setView('split')">양갈래</button>
             <button class="tab-btn tb-mixed" onclick="setView('mixed')">통합</button>
             <button class="tab-btn tb-dream" onclick="setView('dream')">드림만</button>
             <button class="tab-btn tb-canon" onclick="setView('canon')">원작만</button>
@@ -314,7 +314,20 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
         </div>
       </div>
       <div id="eraContainer" class="view-split">
-        <div class="empty-state"><div class="icon">✦</div><p>왼쪽에서 챕터를 생성하면 여기에 나타납니다.</p></div>
+        <div class="empty-state">
+          <div class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M12 20m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+              <path d="M10 20h-6"/>
+              <path d="M14 20h6"/>
+              <path d="M12 15l-2 -2h-3a1 1 0 0 1 -1 -1v-8a1 1 0 0 1 1 -1h10a1 1 0 0 1 1 1v8a1 1 0 0 1 -1 1h-3l-2 2z"/>
+              <path d="M12 6v2"/>
+              <path d="M12 11v.01"/>
+            </svg>
+          </div>
+          <p>왼쪽에서 챕터를 생성하면 여기에 나타납니다.</p>
+        </div>
       </div>
     </main>
 
@@ -704,7 +717,7 @@ function render() {
   var container = document.getElementById('eraContainer');
   var viewClass = container.className;
   if (eras.length === 0) {
-    container.innerHTML = '<div class="empty-state"><div class="icon">✦</div><p>왼쪽에서 챕터를 생성하면 여기에 나타납니다.</p></div>';
+    container.innerHTML = '<div class="empty-state"><div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 20m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M10 20h-6"/><path d="M14 20h6"/><path d="M12 15l-2 -2h-3a1 1 0 0 1 -1 -1v-8a1 1 0 0 1 1 -1h10a1 1 0 0 1 1 1v8a1 1 0 0 1 -1 1h-3l-2 2z"/><path d="M12 6v2"/><path d="M12 11v.01"/></svg></div><p>왼쪽에서 챕터를 생성하면 여기에 나타납니다.</p></div>';
     container.className = viewClass;
     return;
   }
@@ -894,7 +907,7 @@ function openExport() {
 
   hp.push('<div class="sw vs">');
   hp.push('<div class="sw-tg">');
-  hp.push('<div class="sw-tabs"><button class="sw-tab on" onclick="sV(this,\'vs\')">양날개</button><button class="sw-tab" onclick="sV(this,\'vm\')">통합</button><button class="sw-tab dream" onclick="sV(this,\'vd\')">드림만</button><button class="sw-tab canon" onclick="sV(this,\'vc\')">원작만</button></div>');
+  hp.push('<div class="sw-tabs"><button class="sw-tab on" onclick="sV(this,\'vs\')">양갈래</button><button class="sw-tab" onclick="sV(this,\'vm\')">통합</button><button class="sw-tab dream" onclick="sV(this,\'vd\')">드림만</button><button class="sw-tab canon" onclick="sV(this,\'vc\')">원작만</button></div>');
   hp.push('<div class="sw-div"></div>');
   hp.push('<div class="sw-tabs mode"><button class="sw-tab flow" onclick="sV(this,\'vf\')">타임라인만</button><button class="sw-tab narr" onclick="sV(this,\'vn\')">서사만</button></div>');
   hp.push('</div>');
